@@ -60,7 +60,6 @@ class AddressBook {
     }
 
     addContact(contact) {
-        // Check for duplicate by full name (case-insensitive)
         const isDuplicate = this.contacts.some(
             c => c.firstName.toLowerCase() === contact.firstName.toLowerCase() &&
                  c.lastName.toLowerCase() === contact.lastName.toLowerCase()
@@ -75,22 +74,14 @@ class AddressBook {
         console.log("✅ Contact added successfully!");
     }
 
-    findContact(name) {
-        return this.contacts.find(contact => contact.firstName === name || contact.lastName === name);
+    searchByCity(city) {
+        const results = this.contacts.filter(contact => contact.city.toLowerCase() === city.toLowerCase());
+        return results.length > 0 ? results : `❌ No contacts found in city: ${city}`;
     }
 
-    deleteContact(name) {
-        const index = this.contacts.findIndex(contact => contact.firstName === name || contact.lastName === name);
-        if (index === -1) {
-            console.log(`❌ Contact with name '${name}' not found!`);
-            return;
-        }
-        this.contacts.splice(index, 1);
-        console.log(`✅ Contact '${name}' deleted successfully!`);
-    }
-
-    countContacts() {
-        return this.contacts.length;
+    searchByState(state) {
+        const results = this.contacts.filter(contact => contact.state.toLowerCase() === state.toLowerCase());
+        return results.length > 0 ? results : `❌ No contacts found in state: ${state}`;
     }
 
     displayContacts() {
@@ -98,7 +89,7 @@ class AddressBook {
             console.log("📂 Address Book is empty!");
             return;
         }
-        console.log(`📜 Address Book Contacts (Total: ${this.countContacts()})`);
+        console.log(`📜 Address Book Contacts (Total: ${this.contacts.length})`);
         this.contacts.forEach((contact, index) => {
             console.log(`${index + 1}. ${contact.displayContact()}`);
         });
@@ -119,17 +110,22 @@ try {
         "110001", "9988776655", "john.doe@example.com"
     );
 
-    let duplicateContact = new AddressBookContact(
-        "Sarthak", "Rastogi", "789 Street", "Noida", "Uttar Pradesh",
-        "201301", "9123456789", "sarthak.r@example.com"
+    let contact3 = new AddressBookContact(
+        "Jane", "Smith", "789 Road", "Meerut", "Uttar Pradesh",
+        "250003", "9123456789", "jane.smith@example.com"
     );
 
     addressBook.addContact(contact1);
     addressBook.addContact(contact2);
-    addressBook.addContact(duplicateContact); // ❌ Should be rejected as duplicate
+    addressBook.addContact(contact3);
 
-    // Display all contacts
-    addressBook.displayContacts();
+    // ✅ Search by City
+    console.log("\n🔎 Searching for contacts in 'Meerut':");
+    console.log(addressBook.searchByCity("Meerut"));
+
+    // ✅ Search by State
+    console.log("\n🔎 Searching for contacts in 'Delhi':");
+    console.log(addressBook.searchByState("Delhi"));
 
 } catch (error) {
     console.error("❌ Error:", error.message);
