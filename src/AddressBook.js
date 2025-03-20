@@ -18,39 +18,27 @@ class AddressBook {
         console.log("✅ Contact added successfully!");
     }
 
-    searchByCity(city) {
-        return this.contacts.filter(contact => contact.city.toLowerCase() === city.toLowerCase());
-    }
-
-    searchByState(state) {
-        return this.contacts.filter(contact => contact.state.toLowerCase() === state.toLowerCase());
-    }
-
-    viewByCity() {
-        const groupedByCity = this.contacts.reduce((acc, contact) => {
-            acc[contact.city] = acc[contact.city] || [];
-            acc[contact.city].push(contact);
+    countByCity() {
+        const cityCount = this.contacts.reduce((acc, contact) => {
+            acc[contact.city] = (acc[contact.city] || 0) + 1;
             return acc;
         }, {});
 
-        console.log("\n📌 Contacts Grouped by City:");
-        Object.entries(groupedByCity).forEach(([city, contacts]) => {
-            console.log(`🏙️ ${city}:`);
-            contacts.forEach(contact => console.log(`   - ${contact.firstName} ${contact.lastName}`));
+        console.log("\n📌 Count of Contacts by City:");
+        Object.entries(cityCount).forEach(([city, count]) => {
+            console.log(`🏙️ ${city}: ${count} contact(s)`);
         });
     }
 
-    viewByState() {
-        const groupedByState = this.contacts.reduce((acc, contact) => {
-            acc[contact.state] = acc[contact.state] || [];
-            acc[contact.state].push(contact);
+    countByState() {
+        const stateCount = this.contacts.reduce((acc, contact) => {
+            acc[contact.state] = (acc[contact.state] || 0) + 1;
             return acc;
         }, {});
 
-        console.log("\n📌 Contacts Grouped by State:");
-        Object.entries(groupedByState).forEach(([state, contacts]) => {
-            console.log(`🌍 ${state}:`);
-            contacts.forEach(contact => console.log(`   - ${contact.firstName} ${contact.lastName}`));
+        console.log("\n📌 Count of Contacts by State:");
+        Object.entries(stateCount).forEach(([state, count]) => {
+            console.log(`🌍 ${state}: ${count} contact(s)`);
         });
     }
 }
@@ -84,11 +72,11 @@ try {
     addressBook.addContact(contact3);
     addressBook.addContact(contact4);
 
-    // ✅ View by City
-    addressBook.viewByCity();
+    // ✅ Count by City
+    addressBook.countByCity();
 
-    // ✅ View by State
-    addressBook.viewByState();
+    // ✅ Count by State
+    addressBook.countByState();
 
 } catch (error) {
     console.error("❌ Error:", error.message);
