@@ -60,10 +60,17 @@ class AddressBook {
     }
 
     addContact(contact) {
-        if (this.contacts.some(c => c.email === contact.email)) {
-            console.log(`❌ Contact with email ${contact.email} already exists!`);
+        // Check for duplicate by full name (case-insensitive)
+        const isDuplicate = this.contacts.some(
+            c => c.firstName.toLowerCase() === contact.firstName.toLowerCase() &&
+                 c.lastName.toLowerCase() === contact.lastName.toLowerCase()
+        );
+
+        if (isDuplicate) {
+            console.log(`❌ Duplicate entry: Contact with name ${contact.firstName} ${contact.lastName} already exists!`);
             return;
         }
+
         this.contacts.push(contact);
         console.log("✅ Contact added successfully!");
     }
@@ -112,21 +119,17 @@ try {
         "110001", "9988776655", "john.doe@example.com"
     );
 
+    let duplicateContact = new AddressBookContact(
+        "Sarthak", "Rastogi", "789 Street", "Noida", "Uttar Pradesh",
+        "201301", "9123456789", "sarthak.r@example.com"
+    );
+
     addressBook.addContact(contact1);
     addressBook.addContact(contact2);
+    addressBook.addContact(duplicateContact); // ❌ Should be rejected as duplicate
 
-    // Display total number of contacts
-    console.log(`\n📊 Total Contacts: ${addressBook.countContacts()}`);
-
-    // Delete a contact
-    console.log("\n🗑️ Deleting John's Contact...");
-    addressBook.deleteContact("John");
-
-    // Display updated contacts
+    // Display all contacts
     addressBook.displayContacts();
-
-    // Show updated count
-    console.log(`\n📊 Updated Total Contacts: ${addressBook.countContacts()}`);
 
 } catch (error) {
     console.error("❌ Error:", error.message);
