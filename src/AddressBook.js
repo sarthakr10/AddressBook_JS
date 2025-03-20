@@ -1,59 +1,3 @@
-class AddressBookContact {
-    constructor(firstName, lastName, address, city, state, zip, phone, email) {
-        this.firstName = this.validateName(firstName, "First Name");
-        this.lastName = this.validateName(lastName, "Last Name");
-        this.address = this.validateAddress(address, "Address");
-        this.city = this.validateAddress(city, "City");
-        this.state = this.validateAddress(state, "State");
-        this.zip = this.validateZip(zip);
-        this.phone = this.validatePhone(phone);
-        this.email = this.validateEmail(email);
-    }
-
-    validateName(name, fieldName) {
-        const namePattern = /^[A-Z][a-zA-Z]{2,}$/;
-        if (!namePattern.test(name)) {
-            throw new Error(`${fieldName} must start with a capital letter and have at least 3 characters.`);
-        }
-        return name;
-    }
-
-    validateAddress(value, fieldName) {
-        if (value.length < 4) {
-            throw new Error(`${fieldName} must have at least 4 characters.`);
-        }
-        return value;
-    }
-
-    validateZip(zip) {
-        const zipPattern = /^[1-9][0-9]{5}$/;
-        if (!zipPattern.test(zip)) {
-            throw new Error("Invalid ZIP code. It must be a 6-digit number.");
-        }
-        return zip;
-    }
-
-    validatePhone(phone) {
-        const phonePattern = /^[6-9][0-9]{9}$/;
-        if (!phonePattern.test(phone)) {
-            throw new Error("Invalid phone number. It must be 10 digits starting with 6-9.");
-        }
-        return phone;
-    }
-
-    validateEmail(email) {
-        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!emailPattern.test(email)) {
-            throw new Error("Invalid email format.");
-        }
-        return email;
-    }
-
-    displayContact() {
-        return `Name: ${this.firstName} ${this.lastName} | Address: ${this.address}, ${this.city}, ${this.state} - ${this.zip} | Phone: ${this.phone} | Email: ${this.email}`;
-    }
-}
-
 class AddressBook {
     constructor() {
         this.contacts = [];
@@ -75,23 +19,38 @@ class AddressBook {
     }
 
     searchByCity(city) {
-        const results = this.contacts.filter(contact => contact.city.toLowerCase() === city.toLowerCase());
-        return results.length > 0 ? results : `❌ No contacts found in city: ${city}`;
+        return this.contacts.filter(contact => contact.city.toLowerCase() === city.toLowerCase());
     }
 
     searchByState(state) {
-        const results = this.contacts.filter(contact => contact.state.toLowerCase() === state.toLowerCase());
-        return results.length > 0 ? results : `❌ No contacts found in state: ${state}`;
+        return this.contacts.filter(contact => contact.state.toLowerCase() === state.toLowerCase());
     }
 
-    displayContacts() {
-        if (this.contacts.length === 0) {
-            console.log("📂 Address Book is empty!");
-            return;
-        }
-        console.log(`📜 Address Book Contacts (Total: ${this.contacts.length})`);
-        this.contacts.forEach((contact, index) => {
-            console.log(`${index + 1}. ${contact.displayContact()}`);
+    viewByCity() {
+        const groupedByCity = this.contacts.reduce((acc, contact) => {
+            acc[contact.city] = acc[contact.city] || [];
+            acc[contact.city].push(contact);
+            return acc;
+        }, {});
+
+        console.log("\n📌 Contacts Grouped by City:");
+        Object.entries(groupedByCity).forEach(([city, contacts]) => {
+            console.log(`🏙️ ${city}:`);
+            contacts.forEach(contact => console.log(`   - ${contact.firstName} ${contact.lastName}`));
+        });
+    }
+
+    viewByState() {
+        const groupedByState = this.contacts.reduce((acc, contact) => {
+            acc[contact.state] = acc[contact.state] || [];
+            acc[contact.state].push(contact);
+            return acc;
+        }, {});
+
+        console.log("\n📌 Contacts Grouped by State:");
+        Object.entries(groupedByState).forEach(([state, contacts]) => {
+            console.log(`🌍 ${state}:`);
+            contacts.forEach(contact => console.log(`   - ${contact.firstName} ${contact.lastName}`));
         });
     }
 }
@@ -115,17 +74,21 @@ try {
         "250003", "9123456789", "jane.smith@example.com"
     );
 
+    let contact4 = new AddressBookContact(
+        "Alice", "Johnson", "101 Block", "Noida", "Uttar Pradesh",
+        "201301", "9876512345", "alice.johnson@example.com"
+    );
+
     addressBook.addContact(contact1);
     addressBook.addContact(contact2);
     addressBook.addContact(contact3);
+    addressBook.addContact(contact4);
 
-    // ✅ Search by City
-    console.log("\n🔎 Searching for contacts in 'Meerut':");
-    console.log(addressBook.searchByCity("Meerut"));
+    // ✅ View by City
+    addressBook.viewByCity();
 
-    // ✅ Search by State
-    console.log("\n🔎 Searching for contacts in 'Delhi':");
-    console.log(addressBook.searchByState("Delhi"));
+    // ✅ View by State
+    addressBook.viewByState();
 
 } catch (error) {
     console.error("❌ Error:", error.message);
